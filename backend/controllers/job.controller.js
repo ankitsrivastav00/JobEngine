@@ -37,6 +37,7 @@ export const postJob = async(req,res)=>{
 
 //student
 export const getAllJobs=async(req,res)=>{
+  
   try{
       const Keyword = req.query.keyword || "";
        const query = {
@@ -48,9 +49,9 @@ export const getAllJobs=async(req,res)=>{
        const jobs = await Job.find(query).populate({
         path:"company"
        }).sort({createdAt:-1})
-     
+       console.log("Jobs count:", jobs.length);
        console.log(jobs)
-
+       
        if(!jobs){
         return res.status(404).json({
           message:"Job not found",
