@@ -32,12 +32,12 @@ app.use("/api/v1/user",userRoute);
  app.use("/api/v1/job",jobRoute);
  app.use("/api/v1/application",applicationRoute);
 
- app.use(express.static(path.join(_dirname,"/frontend/dist")));
-//  app.use("*",(_,res)=>{
-//     res.sendFile(path.resolve(_dirname,"frontend","dist","index.html"));
-//  })
-app.use((req, res) => {
-  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+//  app.use(express.static(path.join(_dirname,"/frontend/dist")));
+// app.use((req, res) => {
+//   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+// });
+app.get("/", (req, res) => {
+  res.send("JobEngine Backend API is running...");
 });
 
 
