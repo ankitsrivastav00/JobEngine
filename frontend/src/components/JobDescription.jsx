@@ -44,8 +44,11 @@ const JobDescription = () => {
         try {
             const res = await axios.post(
                 `${Application_API_END_POINT}/apply/${jobId}`,
-                { withCredentials: true }
-            )
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
 
             if (res.data.success) {
                 setIsApplied(true)
@@ -102,8 +105,8 @@ const JobDescription = () => {
                     onClick={applyJobHandler}
                     disabled={isApplied}
                     className={`rounded-lg ${isApplied
-                            ? 'bg-gray-600 cursor-not-allowed'
-                            : 'bg-indigo-600 hover:bg-indigo-700'
+                        ? 'bg-gray-600 cursor-not-allowed'
+                        : 'bg-indigo-600 hover:bg-indigo-700'
                         }`}
                 >
                     {isApplied ? "Already Applied" : "Apply Now"}
