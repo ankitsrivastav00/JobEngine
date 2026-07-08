@@ -10,46 +10,79 @@ import { toast } from "sonner";
 import { Application_API_END_POINT, JOB_API_END_POINT } from "../../utils/constant.js";
 
 const JobDescription = () => {
-    const {singleJob}= useSelector(store=>store.job);
-    const {user} = useSelector(store=>store.auth)
-const isIntiallyApplied=singleJob?.applications.some(application=>application.applicant ===user?._id) || false;
-const [isApplied,setIsApplied] = useState(isIntiallyApplied)
+    const { singleJob } = useSelector(store => store.job);
+    const { user } = useSelector(store => store.auth)
+    const isIntiallyApplied = singleJob?.applications.some(application => application.applicant === user?._id) || false;
+    const [isApplied, setIsApplied] = useState(isIntiallyApplied)
     const params = useParams();
     const jobId = params.id;
-    const dispatch= useDispatch();
+    const dispatch = useDispatch();
 
-    const applyJobHandler = async()=>{
-        try{
-  const res = await axios.get(`${Application_API_END_POINT}/apply/${jobId}`,{withCredentials:true})
-  console.log(res.data)
-  if(res.data.success){
-    setIsApplied(true)
-    const updateSinglejob = {...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]};
-    dispatch(setSingleJob(updateSinglejob))
-    toast.success(res.data.message)
-  }
-        }catch(error){
+    //     const applyJobHandler = async()=>{
+    //         try{
+    //   const res = await axios.get(`${Application_API_END_POINT}/apply/${jobId}`,{withCredentials:true})
+    //   console.log(res.data)
+    //   if(res.data.success){
+    //     setIsApplied(true)
+    //     const updateSinglejob = {...singleJob,applications:[...singleJob.applications,{applicant:user?._id}]};
+    //     dispatch(setSingleJob(updateSinglejob))
+    //     toast.success(res.data.message)
+    //   }
+    //         }catch(error){
+    //             console.log(error);
+    //             toast.error(error.response.data.message)
+
+    //         }
+    //     }
+    const applyJobHandler = async () => {
+
+        if (!user) {
+            toast.error("Please login first to apply for this job");
+            return;
+        }
+
+        try {
+            const res = await axios.post(
+                `${Application_API_END_POINT}/apply/${jobId}`,
+                { withCredentials: true }
+            )
+
+            if (res.data.success) {
+                setIsApplied(true)
+
+                const updateSinglejob = {
+                    ...singleJob,
+                    applications: [
+                        ...singleJob.applications,
+                        { applicant: user._id }
+                    ]
+                };
+
+                dispatch(setSingleJob(updateSinglejob))
+                toast.success(res.data.message)
+            }
+
+        } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message)
-            
+            toast.error(error.response?.data?.message || "Something went wrong");
         }
     }
-    useEffect(()=>{
-        const fetchSingleJob = async () =>{
-            try{
- const res = await axios(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
- if(res.data.success){  
+    useEffect(() => {
+        const fetchSingleJob = async () => {
+            try {
+                const res = await axios(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
+                if (res.data.success) {
 
-    dispatch(setSingleJob(res.data.job))
-    setIsApplied(res.data.job.applications.some(application=>application.applicant === user?._id))
- }
-            }catch(error){
+                    dispatch(setSingleJob(res.data.job))
+                    setIsApplied(res.data.job.applications.some(application => application.applicant === user?._id))
+                }
+            } catch (error) {
                 console.log(error);
-                
+
             }
         }
         fetchSingleJob();
-    },[jobId,dispatch,user?._id])
+    }, [jobId, dispatch, user?._id])
     return (
         <div className="max-w-5xl mx-auto my-10">
             <div className="flex itmes-center justify-between">
@@ -61,9 +94,21 @@ const [isApplied,setIsApplied] = useState(isIntiallyApplied)
                         <Badge className={'text-indigo-600 font-bold'} variant="ghost">{singleJob?.salary}LPA</Badge>
                     </div>
                 </div>
-                <Button 
+                {/* <Button 
              onClick={isApplied ? null : applyJobHandler}
-                disabled={isApplied} className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{isApplied ? "Already Applied" : "Apply Now"}</Button>
+                disabled={isApplied} className={`rounded-lg ${isApplied ? 'bg-gray-600 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}>{isApplied ? "Already Applied" : "Apply Now"}</Button> */}
+
+                <Button
+                    onClick={applyJobHandler}
+                    disabled={isApplied}
+                    className={`rounded-lg ${isApplied
+                            ? 'bg-gray-600 cursor-not-allowed'
+                            : 'bg-indigo-600 hover:bg-indigo-700'
+                        }`}
+                >
+                    {isApplied ? "Already Applied" : "Apply Now"}
+                </Button>
+
             </div>
             <h1 className="border-b-2 border-b-gray-300 font-medium py-4">Job Description</h1>
             <div>
