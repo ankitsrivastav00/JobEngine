@@ -49,7 +49,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    console.log(email,password,role)  
+     
     if (!email || !password || !role) {
       return res.status(400).json({
         message: "something is missing",
