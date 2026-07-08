@@ -33,7 +33,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
       role,
       profile: {
-       
+
         profilePhoto: cloudResponse.secure_url,
       },
     });
@@ -49,7 +49,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
-     
+
     if (!email || !password || !role) {
       return res.status(400).json({
         message: "something is missing",
@@ -96,8 +96,8 @@ export const login = async (req, res) => {
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none",
       })
       .json({
         message: `Welcome back ${user.fullName}`,
